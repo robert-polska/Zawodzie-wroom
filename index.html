@@ -177,20 +177,83 @@ body{
 </div>
 
 <script>
-setInterval(()=>clock.innerHTML=new Date().toLocaleTimeString(),1000);
+let mode = "AUTO";
+let hv = false;
+let pc = false;
+let ct = false;
+let t = 21;
 
-let mode="AUTO", hv=false, pc=false, ct=false, t=21;
+// ===== ZEGAR =====
+setInterval(() => {
+  clock.innerHTML = new Date().toLocaleTimeString();
+}, 1000);
 
-autoBtn.onclick=()=>{mode="AUTO";autoBtn.classList.add("active");manualBtn.classList.remove("active");};
-manualBtn.onclick=()=>{mode="MANUAL";manualBtn.classList.add("active");autoBtn.classList.remove("active");};
+// ===== TRYB =====
+autoBtn.onclick = () => {
+  mode = "AUTO";
+  autoBtn.classList.add("active");
+  manualBtn.classList.remove("active");
 
-hv.onclick=()=>{hv=!hv;hv.classList.toggle("active",hv);if(!hv){pc=false;ct=false;pc.classList.remove("active");ct.classList.remove("active");}};
-pc.onclick=()=>{if(hv){pc=!pc;pc.classList.toggle("active",pc);}};
-ct.onclick=()=>{if(hv){ct=!ct;ct.classList.toggle("active",ct);}};
+  // blokada wszystkiego
+  hv = pc = ct = false;
+  updateRelays();
+};
 
-function adj(v){t+=v;if(t<18)t=18;if(t>30)t=30;tzad.innerHTML=t.toFixed(1)+" °C";}
+manualBtn.onclick = () => {
+  mode = "MANUAL";
+  manualBtn.classList.add("active");
+  autoBtn.classList.remove("active");
+};
 
-pwm.oninput=()=>{if(mode!=="MANUAL"||!hv)pwm.value=0;pwmVal.innerHTML=pwm.value;}
+// ===== PRZEKAŹNIKI =====
+hv.onclick = () => {
+  if (mode !== "MANUAL") return;
+
+  hv = !hv;
+  if (!hv) {
+    pc = false;
+    ct = false;
+  }
+  updateRelays();
+};
+
+pc.onclick = () => {
+  if (mode !== "MANUAL") return;
+  if (!hv) return;
+
+  pc = !pc;
+  updateRelays();
+};
+
+ct.onclick = () => {
+  if (mode !== "MANUAL") return;
+  if (!hv) return;
+
+  ct = !ct;
+  updateRelays();
+};
+
+function updateRelays() {
+  hv.classList.toggle("active", hv);
+  pc.classList.toggle("active", pc);
+  ct.classList.toggle("active", ct);
+}
+
+// ===== TEMPERATURA ZADANA =====
+function adj(v) {
+  t += v;
+  if (t < 18) t = 18;
+  if (t > 30) t = 30;
+  tzad.innerHTML = t.toFixed(1) + " °C";
+}
+
+// ===== PWM =====
+pwm.oninput = () => {
+  if (mode !== "MANUAL" || !hv) {
+    pwm.value = 0;
+  }
+  pwmVal.innerHTML = pwm.value;
+};
 </script>
 
 </body>
