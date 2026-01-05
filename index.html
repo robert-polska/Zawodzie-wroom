@@ -15,6 +15,10 @@ body{
 .logo{
   padding:20px 30px;
 }
+.logo img{
+  height:42px;
+  object-fit:contain;
+}
 .card{
   max-width:820px;
   margin:20px auto;
@@ -85,14 +89,18 @@ body{
   font-size:14px;
   color:#555;
 }
-.footer a{color:#3aa9ff;text-decoration:none}
+.footer a{
+  color:#3aa9ff;
+  text-decoration:none;
+}
 </style>
 </head>
 
 <body>
 
+<!-- LOGO -->
 <div class="logo">
-  <strong>IXH</strong>
+  <img src="logo.png" alt="IXH – Integrated eXecution Hub">
 </div>
 
 <div class="card">
@@ -116,9 +124,18 @@ body{
   </div>
 
   <div class="temp-row">
-    <div class="temp"><div class="label">Nawiew</div><div class="val">21.5 °C</div></div>
-    <div class="temp"><div class="label">Wywiew</div><div class="val">22.1 °C</div></div>
-    <div class="temp"><div class="label">CT</div><div class="val">31.9 °C</div></div>
+    <div class="temp">
+      <div class="label">Nawiew</div>
+      <div class="val">21.5 °C</div>
+    </div>
+    <div class="temp">
+      <div class="label">Wywiew</div>
+      <div class="val">22.1 °C</div>
+    </div>
+    <div class="temp">
+      <div class="label">CT</div>
+      <div class="val">31.9 °C</div>
+    </div>
   </div>
 
   <div class="temp-wide">
@@ -137,9 +154,11 @@ body{
 
 </div>
 
+<!-- STOPKA -->
 <div class="footer">
   IXH-Polska<br>
-  ixh@linuxmail.org | <a href="tel:+48578424942">+48 578 424 942</a>
+  ixh@linuxmail.org |
+  <a href="tel:+48578424942">+48 578 424 942</a>
 </div>
 
 <script>
@@ -184,24 +203,31 @@ manualBtn.onclick=()=>{
 hvBtn.onclick=()=>{
   hv=!hv;
   if(!hv){
-    pc=false; ct=false;
-    pwmVal=0; pwm.value=0;
+    pc=false;
+    ct=false;
+    pwmVal=0;
+    pwm.value=0;
   }
   update();
 };
 
 pcBtn.onclick=()=>{
   if(!hv || mode!=="MANUAL")return;
-  pc=!pc; update();
+  pc=!pc;
+  update();
 };
 
 ctBtn.onclick=()=>{
   if(!hv || mode!=="MANUAL")return;
-  ct=!ct; update();
+  ct=!ct;
+  update();
 };
 
 pwm.oninput=()=>{
-  if(!hv || mode!=="MANUAL"){pwm.value=0; return;}
+  if(!hv || mode!=="MANUAL"){
+    pwm.value=0;
+    return;
+  }
   pwmVal=pwm.value;
   update();
 };
