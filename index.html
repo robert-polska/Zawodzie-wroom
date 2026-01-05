@@ -10,20 +10,15 @@ body{
   margin:0;
   background:#ffffff;
   font-family:Arial, Helvetica, sans-serif;
-  color:#111;
 }
 
-/* LOGO */
 .header{
   max-width:1100px;
   margin:40px auto 10px;
   padding:0 20px;
 }
-.header img{
-  height:60px;
-}
+.header img{height:60px;}
 
-/* KARTA */
 .card{
   max-width:900px;
   margin:20px auto;
@@ -40,7 +35,6 @@ body{
   margin-bottom:30px;
 }
 
-/* PRZYCISKI */
 .row{
   display:flex;
   gap:20px;
@@ -63,10 +57,8 @@ body{
 
 .btn.active{
   background:#46d36f;
-  color:#000;
 }
 
-/* TEMPERATURA ZADANA */
 .setpoint{
   text-align:center;
   margin:30px 0;
@@ -81,10 +73,8 @@ body{
   border-radius:12px;
   border:none;
   font-size:26px;
-  cursor:pointer;
 }
 
-/* TEMPERATURY */
 .temps{
   display:flex;
   gap:20px;
@@ -103,7 +93,6 @@ body{
 }
 .temp .val{
   font-size:26px;
-  margin-top:6px;
 }
 
 .temp-wide{
@@ -114,55 +103,39 @@ body{
   text-align:center;
 }
 
-/* PWM */
 .pwm{
   margin-top:30px;
 }
-.pwm label{
-  display:block;
-  margin-bottom:8px;
-}
-.pwm input[type=range]{
-  width:100%;
-}
+.pwm input{width:100%;}
 .pwm .val{
   text-align:center;
   margin-top:6px;
   color:#8fd3ff;
 }
 
-/* STOPKA */
 .footer{
   text-align:center;
   margin:30px 0;
   color:#555;
   font-size:14px;
 }
-.footer a{
-  color:#3a7bff;
-  text-decoration:none;
-}
+.footer a{color:#3a7bff;text-decoration:none;}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-  <!-- PODMIEŃ NA SWOJE logo.png -->
   <img src="logo.png" alt="IXH">
 </div>
 
 <div class="card">
 
-  <div class="time" id="clock">20:04:22</div>
+  <div class="time" id="clock">12:19:22</div>
 
   <div class="row">
     <div class="btn active" id="autoBtn">AUTO</div>
     <div class="btn" id="manualBtn">MANUAL</div>
-  </div>
-
-  <div class="row" style="margin-top:20px">
-    <div class="btn" id="r1Btn">Start HV (R1)</div>
   </div>
 
   <div class="setpoint">
@@ -173,23 +146,21 @@ body{
   </div>
 
   <div class="temps">
-    <div class="temp">
-      <div class="label">Nawiew</div>
-      <div class="val">21.5 °C</div>
-    </div>
-    <div class="temp">
-      <div class="label">Wywiew</div>
-      <div class="val">22.1 °C</div>
-    </div>
-    <div class="temp">
-      <div class="label">CT</div>
-      <div class="val">31.9 °C</div>
-    </div>
+    <div class="temp"><div class="label">Nawiew</div><div class="val">21.5 °C</div></div>
+    <div class="temp"><div class="label">Wywiew</div><div class="val">22.1 °C</div></div>
+    <div class="temp"><div class="label">CT</div><div class="val">31.9 °C</div></div>
   </div>
 
   <div class="temp-wide">
     <div class="label">Zewnętrzna</div>
     <div class="val">4.2 °C</div>
+  </div>
+
+  <!-- PRZEKAŹNIKI -->
+  <div class="row" style="margin-top:30px">
+    <div class="btn" id="hv">Start HV</div>
+    <div class="btn" id="pc">Start PC</div>
+    <div class="btn" id="ct">Pompa CT</div>
   </div>
 
   <div class="pwm">
@@ -206,50 +177,20 @@ body{
 </div>
 
 <script>
-/* ZEGAR */
-setInterval(()=>{
-  const d=new Date();
-  clock.innerHTML=d.toLocaleTimeString();
-},1000);
+setInterval(()=>clock.innerHTML=new Date().toLocaleTimeString(),1000);
 
-/* STANY */
-let mode="AUTO";
-let r1=false;
-let t=21.0;
+let mode="AUTO", hv=false, pc=false, ct=false, t=21;
 
-/* TRYB */
-autoBtn.onclick=()=>{
-  mode="AUTO";
-  autoBtn.classList.add("active");
-  manualBtn.classList.remove("active");
-};
-manualBtn.onclick=()=>{
-  mode="MANUAL";
-  manualBtn.classList.add("active");
-  autoBtn.classList.remove("active");
-};
+autoBtn.onclick=()=>{mode="AUTO";autoBtn.classList.add("active");manualBtn.classList.remove("active");};
+manualBtn.onclick=()=>{mode="MANUAL";manualBtn.classList.add("active");autoBtn.classList.remove("active");};
 
-/* R1 */
-r1Btn.onclick=()=>{
-  r1=!r1;
-  r1Btn.classList.toggle("active",r1);
-};
+hv.onclick=()=>{hv=!hv;hv.classList.toggle("active",hv);if(!hv){pc=false;ct=false;pc.classList.remove("active");ct.classList.remove("active");}};
+pc.onclick=()=>{if(hv){pc=!pc;pc.classList.toggle("active",pc);}};
+ct.onclick=()=>{if(hv){ct=!ct;ct.classList.toggle("active",ct);}};
 
-/* TEMP ZADANA */
-function adj(v){
-  t+=v;
-  if(t<18)t=18;
-  if(t>30)t=30;
-  tzad.innerHTML=t.toFixed(1)+" °C";
-}
+function adj(v){t+=v;if(t<18)t=18;if(t>30)t=30;tzad.innerHTML=t.toFixed(1)+" °C";}
 
-/* PWM – BLOKADA BEZ R1 */
-pwm.oninput=()=>{
-  if(mode!=="MANUAL" || !r1){
-    pwm.value=0;
-  }
-  pwmVal.innerHTML=pwm.value;
-};
+pwm.oninput=()=>{if(mode!=="MANUAL"||!hv)pwm.value=0;pwmVal.innerHTML=pwm.value;}
 </script>
 
 </body>
